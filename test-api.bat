@@ -1,0 +1,13 @@
+@echo off
+echo Testing API...
+curl http://localhost:8081/api/search
+echo.
+echo Testing search for Math courses...
+curl http://localhost:8081/api/search?category=Math
+echo.
+echo Testing fuzzy search...
+curl http://localhost:8081/api/search?q=dinosa
+echo.
+echo Testing suggestions...
+curl http://localhost:8081/api/search/suggest?q=mat
+pause 

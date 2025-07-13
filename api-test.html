@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Course Search API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .test-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-right: 10px;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Course Search API Tester</h1>
+    
+    <div class="test-section">
+        <h2>Basic Search</h2>
+        <button onclick="testEndpoint('http://localhost:8081/api/search')">Test Basic Search</button>
+        <pre id="basic-search-result">Results will appear here...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Search by Category</h2>
+        <button onclick="testEndpoint('http://localhost:8081/api/search?category=Math')">Test Math Category</button>
+        <button onclick="testEndpoint('http://localhost:8081/api/search?category=Science')">Test Science Category</button>
+        <pre id="category-search-result">Results will appear here...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Fuzzy Search</h2>
+        <button onclick="testEndpoint('http://localhost:8081/api/search?q=dinosa')">Test Fuzzy Search for "dinosa"</button>
+        <button onclick="testEndpoint('http://localhost:8081/api/search?q=math')">Test Search for "math"</button>
+        <pre id="fuzzy-search-result">Results will appear here...</pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Suggestions</h2>
+        <button onclick="testEndpoint('http://localhost:8081/api/search/suggest?q=mat')">Test Suggestions for "mat"</button>
+        <pre id="suggestions-result">Results will appear here...</pre>
+    </div>
+    
+    <script>
+        function testEndpoint(url) {
+            // Determine which result element to update based on the URL
+            let resultElementId;
+            if (url.includes('/suggest')) {
+                resultElementId = 'suggestions-result';
+            } else if (url.includes('category=')) {
+                resultElementId = 'category-search-result';
+            } else if (url.includes('q=')) {
+                resultElementId = 'fuzzy-search-result';
+            } else {
+                resultElementId = 'basic-search-result';
+            }
+            
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.textContent = 'Loading...';
+            
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resultElement.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    resultElement.textContent = `Error: ${error.message}`;
+                });
+        }
+    </script>
+</body>
+</html> 
